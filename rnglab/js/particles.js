@@ -1,7 +1,7 @@
 /*!
  * A lightweight and dependency-free javascript plugin
  * for particle backgrounds.
- * 
+ *
  * @author Marc Brüderlin <hello@marcbruederlin.com>
  * @version 1.0.2
  * @license MIT
@@ -11,7 +11,7 @@
 /* exported Particles */
 var Particles = (function(window, document) {
   'use strict';
-  
+
   // Global variables
   var Plugin, Particle, canvas, context, config;
 
@@ -21,18 +21,18 @@ var Particles = (function(window, document) {
 
     // Default settings, will be overridden by the users options
     this.defaults = {
-      maxParticles: 100,
-      sizeVariations: 3,
+      maxParticles: 200,
+      sizeVariations: 1,
       speed: 0.5,
       color: '#000000',
-      minDistance: 120,
-      connectParticles: false
+      minDistance: 100,
+      connectParticles: true
     };
 
     /**
      * The plugins startup function. This method prepares the global config object,
      * the canvas and an event handler for resize events.
-     * 
+     *
      * @param {Object} options - the user options
      */
     this.init = function(options) {
@@ -79,12 +79,12 @@ var Particles = (function(window, document) {
      */
     this.draw = function() {
       context.clearRect(0, 0, canvas.width, canvas.height);
-      
+
       for (var i = this.storage.length; i--;) {
         var particle = this.storage[i];
         particle.draw();
       }
-    
+
       this.update();
     };
 
@@ -94,26 +94,26 @@ var Particles = (function(window, document) {
     this.update = function() {
       for (var i = this.storage.length; i--;) {
         var particle = this.storage[i];
-        
+
         particle.x += particle.vx;
         particle.y += particle.vy;
-        
+
         if (particle.x + particle.radius > canvas.width) {
           particle.x = particle.radius;
         } else if (particle.x - particle.radius < 0) {
           particle.x = canvas.width - particle.radius;
         }
-          
+
         if (particle.y + particle.radius > canvas.height) {
           particle.y = particle.radius;
         } else if (particle.y - particle.radius < 0) {
           particle.y = canvas.height - particle.radius;
         }
-        
+
         if (config.connectParticles) {
           for (var j = i + 1; j < this.storage.length; j++) {
             var particle2 = this.storage[j];
-          
+
             this.distance(particle, particle2);
           }
         }
@@ -126,9 +126,9 @@ var Particles = (function(window, document) {
     this.distance = function(p1, p2) {
       var n, r = p1.x - p2.x,
           dy = p1.y - p2.y;
-          
+
       n = Math.sqrt(r * r + dy * dy);
-      
+
       // Draw a connective line between this two points if the distance is lesser or equal the minimum distance
       if (n <= config.minDistance) {
         context.beginPath();
@@ -146,7 +146,7 @@ var Particles = (function(window, document) {
     this.resize = function() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      
+
       this.draw();
     };
   };
@@ -194,7 +194,7 @@ var Particles = (function(window, document) {
    */
   function _hex2rgb(hex) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    
+
     return result ? {
       r: parseInt(result[1], 16),
       g: parseInt(result[2], 16),
